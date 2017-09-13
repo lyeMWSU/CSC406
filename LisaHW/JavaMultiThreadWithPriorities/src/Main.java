@@ -85,9 +85,11 @@ class WPOut implements Runnable{
     //run method
 
     public void run(){
-       for (int i = 1; i <= n; i+=10){
-           System.out.println("WPx");
-           Thread.yield();
+        for (int i = 1; i <= n; i+=10){
+            System.out.println("WPx");
+            out.print("WPx");
+            out.flush();
+            Thread.yield();
         }
     }
 }
