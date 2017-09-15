@@ -24,9 +24,9 @@ public class Main {
         //priorities
 
         thread1.setPriority(Thread.MAX_PRIORITY);
-        thread2.setPriority(Thread.MIN_PRIORITY);
-        thread3.setPriority(Thread.NORM_PRIORITY);
-        thread4.setPriority(Thread.NORM_PRIORITY);
+        thread2.setPriority(Thread.NORM_PRIORITY);
+        thread3.setPriority(Thread.MIN_PRIORITY);
+        thread4.setPriority(Thread.MIN_PRIORITY);
 
         //Start Threads
 
@@ -57,8 +57,9 @@ class GuiOut implements Runnable{
 
     public void run(){
         for (int i=1; i <= seconds; i++){
-            System.out.print(strings + "\n\n");
-            out.print(strings + "\n\n");
+            System.out.println(strings + "\n");
+            out.println(strings + "\n");
+            out.flush();
             Thread.yield();
 
         }
@@ -83,13 +84,9 @@ class WPOut implements Runnable{
     public void run(){
         for (int i = 0; i <= n; i+=10){
             if (i%10==0){
-
-                System.out.print("WPx\n");
+                System.out.println("WPx\n");
                 out.println("WPx\n");
                 out.flush();
-                System.out.print("WP" + i + "WPx" + "\n\n");
-                out.print("WP" + i + "WPx" + "\n\n");
-
                 Thread.yield();
             }
         }
@@ -112,7 +109,7 @@ class DSOut implements Runnable{
     public void run(){
         for (int i = 0; i <= n; i += 20){
             System.out.println("DS" + i);
-            out.print("DS" + i);
+            out.println("DS" + i);
             if (i%60==0){
                 out.flush();
                 Thread.yield();
@@ -135,24 +132,21 @@ class PrintOut implements Runnable{
     //run method
 
     public void run(){
-        for (int i = 1; i <= n; i++){
-            System.out.print("Print Line " + i + ", characters \n" );
-            out.print("Print Line " + i + ", characters \n" );
-            if (i%60==0){
-
-            }
-            if (i%6*60==0){
-                out.flush();
-
-        for (int i = 0; i <= n; i++){
-            System.out.println("Print Line" + i);
-            out.print("Print Line" + i);
-            if (i%60==0){
+        int i = 1;
+        int j = 1;
+        int k = 60;
+        do {
+            System.out.println("Print Line " + i + ", characters " + j + " - " + k );
+            out.println("Print Line " + i + ", characters " + j + " - " + k);
+            j+=60;
+            k = j+59;
+            i++;
+            if (i%6==0) {
                 System.out.println();
                 out.println();
-
+                out.flush();
                 Thread.yield();
             }
-        }
+        }while (j <= n);
     }
 }
