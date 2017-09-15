@@ -86,9 +86,9 @@ class WPOut implements Runnable{
             if (i%10==0){
                 System.out.print("WPx\n");
                 out.println("WPx\n");
+                out.flush();
                 Thread.yield();
             }
-
         }
     }
 }
@@ -110,7 +110,8 @@ class DSOut implements Runnable{
         for (int i = 0; i <= n; i += 20){
             System.out.println("DS" + i);
             out.print("DS" + i);
-            if (i%20==0){
+            if (i%60==0){
+                out.flush();
                 Thread.yield();
             }
         }
@@ -131,12 +132,19 @@ class PrintOut implements Runnable{
     //run method
 
     public void run(){
-        for (int i = 0; i <= n; i++){
-            System.out.println("Print Line " + );
-            out.print();
+        for (int i = 1; i <= n; i++){
+            System.out.print("Print Line " + i + ", characters \n" );
+            out.print("Print Line " + i + ", characters \n" );
             if (i%60==0){
+
+            }
+
+
+            if (i%6*60==0){
+                out.flush();
                 Thread.yield();
             }
+
         }
     }
 }
