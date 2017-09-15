@@ -9,7 +9,7 @@ public class Main {
 
         //create tasks
 
-        Runnable Gui = new GuiOut("Gui Poll\n\n", 600, output);
+        Runnable Gui = new GuiOut("Gui Poll", 600, output);
         Runnable WP = new WPOut('A', 50*10*2, output);
         Runnable DS = new DSOut(2500, output);
         Runnable Printer = new PrintOut(3600, output);
@@ -57,9 +57,8 @@ class GuiOut implements Runnable{
 
     public void run(){
         for (int i=1; i <= seconds; i++){
-            System.out.print(strings);
-            out.print(strings);
-            out.flush();
+            System.out.print(strings + "\n\n");
+            out.print(strings + "\n\n");
             Thread.yield();
 
         }
@@ -82,11 +81,16 @@ class WPOut implements Runnable{
     //run method
 
     public void run(){
-        for (int i = 1; i <= n; i++){
+        for (int i = 0; i <= n; i+=10){
             if (i%10==0){
+<<<<<<< HEAD
                 System.out.print("WPx\n");
                 out.println("WPx\n");
                 out.flush();
+=======
+                System.out.print("WP" + i + "WPx" + "\n\n");
+                out.print("WP" + i + "WPx" + "\n\n");
+>>>>>>> 65f405f7d69c2458bdd587bac60386fefd12ec86
                 Thread.yield();
             }
         }
@@ -132,6 +136,7 @@ class PrintOut implements Runnable{
     //run method
 
     public void run(){
+<<<<<<< HEAD
         for (int i = 1; i <= n; i++){
             System.out.print("Print Line " + i + ", characters \n" );
             out.print("Print Line " + i + ", characters \n" );
@@ -142,6 +147,14 @@ class PrintOut implements Runnable{
 
             if (i%6*60==0){
                 out.flush();
+=======
+        for (int i = 0; i <= n; i++){
+            System.out.println("Print Line" + i);
+            out.print("Print Line" + i);
+            if (i%60==0){
+                System.out.println();
+                out.println();
+>>>>>>> 65f405f7d69c2458bdd587bac60386fefd12ec86
                 Thread.yield();
             }
 
