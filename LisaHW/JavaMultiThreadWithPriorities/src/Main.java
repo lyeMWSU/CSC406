@@ -108,9 +108,9 @@ class DSOut implements Runnable{
 
     public void run(){
         for (int i = 0; i <= n; i += 20){
-            System.out.println("DS" + i);
-            out.println("DS" + i);
             if (i%60==0){
+                System.out.println("DS" + i);
+                out.println("DS" + i);
                 out.flush();
                 Thread.yield();
             }
