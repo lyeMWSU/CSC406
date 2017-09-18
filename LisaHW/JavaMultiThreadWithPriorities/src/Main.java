@@ -23,10 +23,10 @@ public class Main {
 
         //priorities
 
-        thread1.setPriority(Thread.MAX_PRIORITY);
-        thread2.setPriority(Thread.NORM_PRIORITY);
-        thread3.setPriority(Thread.MIN_PRIORITY);
-        thread4.setPriority(Thread.MIN_PRIORITY);
+        thread1.setPriority(10);
+        thread2.setPriority(1);
+        thread3.setPriority(5);
+        thread4.setPriority(6);
 
         //Start Threads
 
@@ -34,8 +34,8 @@ public class Main {
         thread2.start();
         thread3.start();
         thread4.start();
-
         output.flush();
+
     }
 }
 
