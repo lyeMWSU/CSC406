@@ -9,6 +9,11 @@ public class Main {
         PrintWriter output;
         output = new PrintWriter(new File("output1.txt"));
 
+        Production production = new Production();
+        Financial finance = new Financial();
+        Market market = new Market();
+
+
         //thread pool
         ExecutorService executor = Executors.newFixedThreadPool(9);
 
@@ -23,41 +28,54 @@ public class Main {
         executor.execute(new Job("MB", 2, 'D', 140000, output));
         executor.execute(new Job("MB", 3, 'P', 135000, output));
 
-
         //shutdown the executor
         executor.shutdown();
 
-
         while (!executor.isTerminated()) {}
+
+        System.out.printf("PB-Data: %d\n", Math.round(production.getDataChars()));
+        System.out.printf("PB-Data Cost: %d\n", Math.round(production.getDataCost()));
+        System.out.printf("PB-Print: %d\n", Math.round(production.getPrinterChars()));
+        System.out.printf("PB-Print Cost: %d\n",Math.round(production.getPrinterCost()));
+        System.out.printf("PB-TotalChars: %d\n", Math.round(production.getTotalChars()));
+        System.out.printf("PB-TotalCost: %d\n", Math.round(production.getTotalCost()));
+
+        System.out.println("-----------------------");
+
+        System.out.printf("FB-Data: %d\n", Math.round(finance.getDataChars()));
+        System.out.printf("FB-Data Cost: %d\n", Math.round(finance.getDataCost()));
+        System.out.printf("FB-Print: %d\n", Math.round(finance.getPrinterChars()));
+        System.out.printf("FB-Print Cost: %d\n",Math.round(finance.getPrinterCost()));
+        System.out.printf("FB-TotalChars: %d\n", Math.round(finance.getTotalChars()));
+        System.out.printf("FB-TotalCost: %d\n", Math.round(finance.getTotalCost()));
+
+        System.out.println("-----------------------");
+
+        System.out.printf("MB-Data: %d\n", Math.round(market.getDataChars()));
+        System.out.printf("MB-Data Cost: %d\n", Math.round(market.getDataCost()));
+        System.out.printf("MB-Print: %d\n", Math.round(market.getPrinterChars()));
+        System.out.printf("MB-Print Cost: %d\n",Math.round(market.getPrinterCost()));
+        System.out.printf("MB-TotalChars: %d\n", Math.round(market.getTotalChars()));
+        System.out.printf("MB-TotalCost: %d\n", Math.round(market.getTotalCost()));
+
 
     }
 }
 
 class Job implements Runnable{
-    private static Lock lock=new ReentrantLock();
+    Production product = new Production();
+    Financial finance = new Financial();
+    Market market = new Market();
+
     int n;
     String strings;
     char data;
     PrintWriter out;
     int number;
     double amt;
-    int totald;
-    int totalp;
-    int pb1;
-    int pb2;
-    int pb3;
-    int fb1;
-    int fb2;
-    int fb3;
-    int mb1;
-    int mb2;
-    int mb3;
-    int pb1c;
-    int pb2c;
-    int pb3c;
 
     //constructor
-    public Job(String branch, int port, char device, int numOfChars,PrintWriter output){
+    public Job(String branch, int port, char device, int numOfChars,PrintWriter output) {
         strings = branch;
         n = port;
         data = device;
@@ -67,125 +85,186 @@ class Job implements Runnable{
 
     //run method
     public void run(){
-//        System.out.println(strings+"\t"+n+"\t"+data+"\t"+number+ "\n");
-//        out.println(strings+"\t"+n+"\t"+data+"\t"+number+ "\n");
-        lock.lock(); //acquire the lock for this add.
+        System.out.println(strings+"\t"+n+"\t"+data+"\t"+number+ "\n");
+        out.println(strings+"\t"+n+"\t"+data+"\t"+number+ "\n");
 
-        if (strings == "PB" && data == 'D' && n == 1) {
-            amt = 0.008;
-            pb1 = (int) (amt * number);
-            System.out.println("PB: " + pb1);
-        }else if (strings == "PB" && data == 'D' && n == 2) {
-            amt = 0.008;
-            pb2 = (int) (amt * number);
-            System.out.println("PB: " + pb2);
-        }else if (strings == "PB" && data == 'P' && n == 3){
-            amt = 0.007;
-            pb3 = (int)(amt * number);
-            System.out.println("PB: " + pb3);
-        }else if (strings == "FB" && data == 'D' && n == 2) {
-            amt = 0.007;
-            fb2 = (int) (amt * number);
-            System.out.println("FB: " + fb2);
-        }else if (strings == "FB" && data == 'P' && n == 3) {
-            amt = 0.007;
-            fb3 = (int) (amt * number);
-            System.out.println("FB: " + fb3);
-        }else if (strings == "FB" && data == 'P' && n == 1){
-            amt = 0.009;
-            fb1 = (int)(amt * number);
-            System.out.println("FB: " + fb1);
-        }else if (strings == "MB" && data == 'D' && n == 2) {
-            amt = 0.0082;
-            mb2 = (int) (amt * number);
-            System.out.println("MB: " + mb2);
-        }else if (strings == "MB" && data == 'P' && n == 1){
-            amt = 0.0095;
-            mb1 = (int)(amt * number);
-            System.out.println("MB: " + mb1);
-        }else if (strings == "MB" && data == 'P' && n == 3){
-            amt = 0.0095;
-            mb3 = (int)(amt * number);
-            System.out.println("MB: " + mb3);
-        }else{
-
+        if (strings == "PB"){
+            product.productionBranch(n,data, number);
+        } else if (strings == "FB"){
+            finance.financialBranch(n,data,number);
+        }else if (strings == "MB"){
+            market.marketBranch(n,data,number);
         }
 
-        //calculate total d and p
-
-        totald = (pb1 + pb2);
-
-        System.out.println("The total should be: " + totald);
-
-
-
-
-
-        //get number of characters
-//        if (strings == "PB" && n == 1) {
-//            pb1c = number;
-//            //System.out.println(pb1c);
-//        }else if (strings == "PB" && n == 2){
-//            pb2c = number;
-//            //System.out.println(pb2c);
-//        }else if (strings == "PB" && n == 3){
-//            pb3c = number;
-//            //System.out.println(pb3c);
-//        }
-
-//        totald = pb1c + pb2c;
-//        totalp = pb3c;
-//        System.out.println(totald);
-//        System.out.println(totalp);
-
-
-
-
-        lock.unlock();
-        System.out.flush();
-        out.flush();
-        Thread.yield();
+        //Thread.yield();*/
 
     }//end of run
 }//end of Job Class
 
-//class Router{
-//    //create a lock
-//    PrintWriter out;
-//    int totald;
-//    int totalp;
-//    int totalc;
-//
-//    public Router(PrintWriter output) {
-//        out = output;
-//    }
-//
-//    public void calc(String branch, char device){
-//
-//
-//
-//        System.out.println("the device total for data is: " + totald);
-//        System.out.println("the device total for printer is: " + totalp);
-//        out.println("the device total for data is: " + totald);
-//        out.println("the device total for printer is: " + totalp);
-//        System.out.flush();
-//        out.flush();
-//         //this releases the lock avoiding the race conditions
-//    }//end of calc
-//}//End of Router
+class Production {
 
-//class Calculate implements Runnable {
-//    //this is the Router to add the dollar
-//    Router myrouter;
-//
-//    public Calculate(Router x) {
-//        //this is the constructor
-//        myrouter = x;
-//    }
-//
-//    public void run() {
-//        myrouter.calc("PB", 'D');
-//        myrouter.calc("PB", 'P');
-//    }//add one dollar to the account
-//}
+    static double pCost = 0.0;
+    static double dCost = 0.0;
+    static double pChars = 0.0;
+    static double dChars = 0.0;
+
+    private static Lock lock = new ReentrantLock();
+
+    public void productionBranch(int port, char device, int numOfChars) {
+        lock.lock();
+
+        for (int i = 1; i <= numOfChars; i++) {
+
+            if (port >= 1 && port <= 3) {
+                if (device == 'P') {
+                    pCost += 0.007;
+                    pChars++;
+                } else {
+                    dCost += 0.008;
+                    dChars++;
+                }
+            } else {
+                System.out.println("Error");
+            }
+        }
+        lock.unlock();
+    }
+
+    public double getPrinterCost() {
+        return pCost;
+    }
+
+    public double getPrinterChars() {
+        return pChars;
+    }
+
+    public double getDataCost() {
+        return dCost;
+    }
+
+    public double getDataChars() {
+        return dChars;
+    }
+
+    public double getTotalChars(){
+        return pChars + dChars;
+    }
+
+    public double getTotalCost(){
+        return dCost + pCost;
+    }
+
+}
+
+class Financial{
+
+    static double pCost = 0.0;
+    static double dCost = 0.0;
+    static double pChars = 0.0;
+    static double dChars = 0.0;
+
+    private static Lock lock = new ReentrantLock();
+
+    public void financialBranch(int port, char device, int numOfChars) {
+        lock.lock();
+
+        for (int i = 1; i <= numOfChars; i++) {
+
+            if (port >= 1 && port <= 3) {
+                if (device == 'P') {
+                    pCost += 0.009;
+                    pChars++;
+                } else {
+                    dCost += 0.007;
+                    dChars++;
+                }
+            } else {
+                System.out.println("Error");
+            }
+        }
+        lock.unlock();
+    }
+
+    public double getPrinterCost() {
+        return pCost;
+    }
+
+    public double getPrinterChars() {
+        return pChars;
+    }
+
+    public double getDataCost() {
+        return dCost;
+    }
+
+    public double getDataChars() {
+        return dChars;
+    }
+
+    public double getTotalChars(){
+        return pChars + dChars;
+    }
+
+    public double getTotalCost(){
+        return dCost + pCost;
+    }
+
+}
+
+class Market{
+
+    static double pCost = 0.0;
+    static double dCost = 0.0;
+    static double pChars = 0.0;
+    static double dChars = 0.0;
+
+    private static Lock lock = new ReentrantLock();
+
+    public void marketBranch(int port, char device, int numOfChars) {
+        lock.lock();
+
+        for (int i = 1; i <= numOfChars; i++) {
+
+            if (port >= 1 && port <= 3) {
+                if (device == 'P') {
+                    pCost += 0.0095;
+                    pChars++;
+                } else {
+                    dCost += 0.0082;
+                    dChars++;
+                }
+            } else {
+                System.out.println("Error");
+            }
+        }
+        lock.unlock();
+    }
+
+    public double getPrinterCost() {
+        return pCost;
+    }
+
+    public double getPrinterChars() {
+        return pChars;
+    }
+
+    public double getDataCost() {
+        return dCost;
+    }
+
+    public double getDataChars() {
+        return dChars;
+    }
+
+    public double getTotalChars(){
+        return pChars + dChars;
+    }
+
+    public double getTotalCost(){
+        return dCost + pCost;
+    }
+
+}
+
+
 
