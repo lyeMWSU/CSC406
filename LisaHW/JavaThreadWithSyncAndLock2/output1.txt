@@ -1,40 +1,40 @@
-FB	2	D	150000
-
-PB	2	D	75000
-
-MB	1	P	200000
-
-PB	1	D	60000
-
-MB	3	P	135000
-
-FB	1	P	30000
-
-MB	2	D	140000
+PB	3	P	100000
 
 FB	3	P	89000
 
-PB	3	P	100000
+FB	1	P	30000
+
+MB	1	P	200000
+
+MB	3	P	135000
+
+PB	2	D	75000
+
+MB	2	D	140000
+
+FB	2	D	150000
+
+PB	1	D	60000
 
 -----------------------
-PB-Data: 0
-PB-Data Cost: 0
-PB-Print: 0
-PB-Print Cost: 0
-PB-TotalChars: 0
-PB-TotalCost: 0
+PB-Data: 135000
+PB-Data Cost: 1080
+PB-Print: 100000
+PB-Print Cost: 700
+PB-TotalChars: 235000
+PB-TotalCost: 1780
 -----------------------
-FB-Data: 0
-FB-Data Cost: 0
-FB-Print: 0
-FB-Print Cost: 0
-FB-TotalChars: 0
-FB-TotalCost: 0
+FB-Data: 150000
+FB-Data Cost: 1050
+FB-Print: 119000
+FB-Print Cost: 1071
+FB-TotalChars: 269000
+FB-TotalCost: 2121
 -----------------------
-MB-Data: 0
-MB-Data Cost: 0
-MB-Print: 0
-MB-Print Cost: 0
-MB-TotalChars: 0
-MB-TotalCost: 0
+MB-Data: 140000
+MB-Data Cost: 1148
+MB-Print: 335000
+MB-Print Cost: 3183
+MB-TotalChars: 475000
+MB-TotalCost: 4331
 -----------------------

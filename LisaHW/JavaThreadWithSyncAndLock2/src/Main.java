@@ -9,52 +9,56 @@ public class Main {
         PrintWriter output;
         output = new PrintWriter(new File("output1.txt"));
 
+        Router myrouter = new Router(output);
+
         //thread pool
         ExecutorService executor = Executors.newFixedThreadPool(9);
 
         //create the threads
-        executor.execute(new Job("PB", 1, 'D', 60000, output));
-        executor.execute(new Job("PB", 3, 'P', 100000, output));
-        executor.execute(new Job("PB", 2, 'D', 75000, output));
-        executor.execute(new Job("FB", 1, 'P', 30000, output));
-        executor.execute(new Job("FB", 2, 'D', 150000, output));
-        executor.execute(new Job("FB", 3, 'P', 89000, output));
-        executor.execute(new Job("MB", 1, 'P', 200000, output));
-        executor.execute(new Job("MB", 2, 'D', 140000, output));
-        executor.execute(new Job("MB", 3, 'P', 135000, output));
+        executor.execute(new Job(myrouter.product, 1, 'D', 60000, output));
+        executor.execute(new Job(myrouter.product, 3, 'P', 100000, output));
+        executor.execute(new Job(myrouter.product, 2, 'D', 75000, output));
+        executor.execute(new Job(myrouter.finance, 1, 'P', 30000, output));
+        executor.execute(new Job(myrouter.finance, 2, 'D', 150000, output));
+        executor.execute(new Job(myrouter.finance, 3, 'P', 89000, output));
+        executor.execute(new Job(myrouter.market, 1, 'P', 200000, output));
+        executor.execute(new Job(myrouter.market, 2, 'D', 140000, output));
+        executor.execute(new Job(myrouter.market, 3, 'P', 135000, output));
 
         //shutdown the executor
         executor.shutdown();
 
         while (!executor.isTerminated()) {}
-        Router myrouter = new Router(output);
-        myrouter.run();
+
+        myrouter.printRouter();
 
     }
 }
 
 class Job implements Runnable{
     int n;
-    String strings;
+    Branch branch;
     char data;
-    PrintWriter out;
     int number;
+    PrintWriter output;
 
     //constructor
-    public Job(String branch, int port, char device, int numOfChars,PrintWriter output) {
-        strings = branch;
+    public Job(Branch branch, int port, char device, int numOfChars, PrintWriter out) {
+        this.branch = branch;
         n = port;
         data = device;
         number = numOfChars;
-        out = output;
+        output = out;
     }
 
     //run method
     public void run(){
-        System.out.println(strings+"\t"+n+"\t"+data+"\t"+number+ "\n");
-        out.println(strings+"\t"+n+"\t"+data+"\t"+number+ "\n");
+        branch.calculate(n,data,number);
+
+        //calcs
+        System.out.println(branch.branchName+"\t"+n+"\t"+data+"\t"+number+ "\n");
+        output.println(branch.branchName+"\t"+n+"\t"+data+"\t"+number+ "\n");
         System.out.flush();
-        out.flush();
 
     }//end of run
 }//end of Job Class
@@ -63,170 +67,77 @@ class Job implements Runnable{
 class Branch {
     static Lock lock = new ReentrantLock();
 
-    public static class Production{
-        //important variables
-        double pCost;
-        double dCost;
-        double pChars;
-        double dChars;
+    //important variables
+    double pCost;
+    double dCost;
+    double pChars;
+    double dChars;
+    String branchName;
+    double dCostPer;
+    double pCostPer;
 
-        //getters
-        public double getpCost() {
-            return pCost;
-        }
-        public double getdCost() {
-            return dCost;
-        }
-        public double getpChars() {
-            return pChars;
-        }
-        public double getdChars() {
-            return dChars;
-        }
-        public double getTotChars() {
-            return dChars + pChars;
-        }
-        public double getTotCost() {
-            return dCost + pCost;
-        }
-
-        public void productionBranch(int port, char device, int numOfChars){
-            lock.lock();
-            for (int i = 1; i <= numOfChars; i++) {
-                if (port >= 1 && port <= 3) {
-                    if (device == 'P') {
-                        pCost += 0.007;
-                        pChars++;
-                    } else {
-                        dCost += 0.008;
-                        dChars++;
-                    }
-                } else {
-                    System.out.println("Error");
-                }
-            }
-            lock.unlock();
-        }
+    //constructor
+    public Branch (String branchName, double pCostPer, double dCostPer){
+        this.branchName = branchName;
+        this.dCostPer = dCostPer;
+        this.pCostPer = pCostPer;
     }
 
-    public static class Financial{
-        //important variables
-        double pCost;
-        double dCost;
-        double pChars;
-        double dChars;
+    //getters
+    public double getpCost() {
+        return pCost;
+    }
+    public double getdCost() {
+        return dCost;
+    }
+    public double getpChars() {
+        return pChars;
+    }
+    public double getdChars() {
+        return dChars;
+    }
+    public double getTotChars() {
+        return dChars + pChars;
+    }
+    public double getTotCost() {
+        return dCost + pCost;
+    }
 
-        //getters
-        public double getpCost() {
-            return pCost;
-        }
-        public double getdCost() {
-            return dCost;
-        }
-        public double getpChars() {
-            return pChars;
-        }
-        public double getdChars() {
-            return dChars;
-        }
-        public double getTotChars() {
-            return dChars + pChars;
-        }
-        public double getTotCost() {
-            return dCost + pCost;
-        }
-
-        public void financialBranch(int port, char device, int numOfChars){
-            lock.lock();
-            for (int i = 1; i <= numOfChars; i++) {
-
-                if (port >= 1 && port <= 3) {
-                    if (device == 'P') {
-                        pCost += 0.009;
-                        pChars++;
-                    } else {
-                        dCost += 0.007;
-                        dChars++;
-                    }
+    public void calculate(int port, char device, int numOfChars) {
+        lock.lock();
+        for (int i = 1; i <= numOfChars; i++) {
+            if (port >= 1 && port <= 3) {
+                if (device == 'P') {
+                    pCost += pCostPer;
+                    pChars++;
                 } else {
-                    System.out.println("Error");
+                    dCost += dCostPer;
+                    dChars++;
                 }
+            } else {
+                System.out.println("Error");
             }
-            lock.unlock();
         }
-    }//end of financial
-
-    public static class Market{
-        //important variables
-        double pCost;
-        double dCost;
-        double pChars;
-        double dChars;
-
-        //getters
-        public double getpCost() {
-            return pCost;
-        }
-        public double getdCost() {
-            return dCost;
-        }
-        public double getpChars() {
-            return pChars;
-        }
-        public double getdChars() {
-            return dChars;
-        }
-        public double getTotChars() {
-            return dChars + pChars;
-        }
-        public double getTotCost() {
-            return dCost + pCost;
-        }
-
-        public void marketBranch(int port, char device, int numOfChars){
-            lock.lock();
-            for (int i = 1; i <= numOfChars; i++) {
-                if (port >= 1 && port <= 3) {
-                    if (device == 'P') {
-                        pCost += 0.0095;
-                        pChars++;
-                    } else {
-                        dCost += 0.0082;
-                        dChars++;
-                    }
-                } else {
-                    System.out.println("Error");
-                }
-            }
-            lock.unlock();
-        }
-    }//end of market
+        lock.unlock();
+    }//end of calc
 }//end of branch
 
-class Router implements Runnable{
-    Branch.Production product = new Branch.Production();
-    Branch.Financial finance = new Branch.Financial();
-    Branch.Market market = new Branch.Market();
-    PrintWriter myrouter;
-    int n;
-    String strings;
-    char data;
-    int number;
+class Router{
+    Branch product;
+    Branch finance;
+    Branch market;
 
+    PrintWriter output;
+
+    //constructor
     public Router (PrintWriter out){
-        myrouter = out;
+        product = new Branch("PB",0.007, 0.008);
+        finance = new Branch("FB",0.009, 0.007);
+        market = new Branch("MB",0.0095, 0.0082);
+        output = out;
     }
 
-    public void run(){
-        if (strings == "PB"){
-            product.productionBranch(n,data, number);
-        } else if (strings == "FB"){
-            finance.financialBranch(n,data,number);
-        }else if (strings == "MB"){
-            market.marketBranch(n,data,number);
-        }
-
-
+    public void printRouter(){
         System.out.println("-----------------------");
         System.out.printf("PB-Data: %d\n", Math.round(product.getdChars()));
         System.out.printf("PB-Data Cost: %d\n", Math.round(product.getdCost()));
@@ -250,30 +161,29 @@ class Router implements Runnable{
         System.out.printf("MB-TotalCost: %d\n", Math.round(market.getTotCost()));
         System.out.println("-----------------------");
 
-        myrouter.println("-----------------------");
-        myrouter.printf("PB-Data: %d\n", Math.round(product.getdChars()));
-        myrouter.printf("PB-Data Cost: %d\n", Math.round(product.getdCost()));
-        myrouter.printf("PB-Print: %d\n", Math.round(product.getpChars()));
-        myrouter.printf("PB-Print Cost: %d\n",Math.round(product.getpCost()));
-        myrouter.printf("PB-TotalChars: %d\n", Math.round(product.getTotChars()));
-        myrouter.printf("PB-TotalCost: %d\n", Math.round(product.getTotCost()));
-        myrouter.println("-----------------------");
-        myrouter.printf("FB-Data: %d\n", Math.round(finance.getdChars()));
-        myrouter.printf("FB-Data Cost: %d\n", Math.round(finance.getdCost()));
-        myrouter.printf("FB-Print: %d\n", Math.round(finance.getpChars()));
-        myrouter.printf("FB-Print Cost: %d\n",Math.round(finance.getpCost()));
-        myrouter.printf("FB-TotalChars: %d\n", Math.round(finance.getTotChars()));
-        myrouter.printf("FB-TotalCost: %d\n", Math.round(finance.getTotCost()));
-        myrouter.println("-----------------------");
-        myrouter.printf("MB-Data: %d\n", Math.round(market.getdChars()));
-        myrouter.printf("MB-Data Cost: %d\n", Math.round(market.getdCost()));
-        myrouter.printf("MB-Print: %d\n", Math.round(market.getpChars()));
-        myrouter.printf("MB-Print Cost: %d\n",Math.round(market.getpCost()));
-        myrouter.printf("MB-TotalChars: %d\n", Math.round(market.getTotChars()));
-        myrouter.printf("MB-TotalCost: %d\n", Math.round(market.getTotCost()));
-        myrouter.println("-----------------------");
+        output.println("-----------------------");
+        output.printf("PB-Data: %d\n", Math.round(product.getdChars()));
+        output.printf("PB-Data Cost: %d\n", Math.round(product.getdCost()));
+        output.printf("PB-Print: %d\n", Math.round(product.getpChars()));
+        output.printf("PB-Print Cost: %d\n",Math.round(product.getpCost()));
+        output.printf("PB-TotalChars: %d\n", Math.round(product.getTotChars()));
+        output.printf("PB-TotalCost: %d\n", Math.round(product.getTotCost()));
+        output.println("-----------------------");
+        output.printf("FB-Data: %d\n", Math.round(finance.getdChars()));
+        output.printf("FB-Data Cost: %d\n", Math.round(finance.getdCost()));
+        output.printf("FB-Print: %d\n", Math.round(finance.getpChars()));
+        output.printf("FB-Print Cost: %d\n",Math.round(finance.getpCost()));
+        output.printf("FB-TotalChars: %d\n", Math.round(finance.getTotChars()));
+        output.printf("FB-TotalCost: %d\n", Math.round(finance.getTotCost()));
+        output.println("-----------------------");
+        output.printf("MB-Data: %d\n", Math.round(market.getdChars()));
+        output.printf("MB-Data Cost: %d\n", Math.round(market.getdCost()));
+        output.printf("MB-Print: %d\n", Math.round(market.getpChars()));
+        output.printf("MB-Print Cost: %d\n",Math.round(market.getpCost()));
+        output.printf("MB-TotalChars: %d\n", Math.round(market.getTotChars()));
+        output.printf("MB-TotalCost: %d\n", Math.round(market.getTotCost()));
+        output.println("-----------------------");
         System.out.flush();
-        myrouter.flush();
+        output.flush();
     }
-
 }
