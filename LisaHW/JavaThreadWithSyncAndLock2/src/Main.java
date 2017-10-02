@@ -1,3 +1,10 @@
+/*
+Lisa Ye
+Kent Pickett
+CSC406
+October 1, 2017
+*/
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.concurrent.*;
