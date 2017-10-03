@@ -1,4 +1,4 @@
-Thread add and delete created and launched
+Thread store and erase created and launched
 in storedata amt 5value -3 fill 0
 in storedata amt 8value 2 fill 1
 in storedata amt 3value -5 fill 7
