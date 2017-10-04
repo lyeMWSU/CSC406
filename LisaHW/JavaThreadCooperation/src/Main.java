@@ -12,204 +12,120 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 public class Main {
 
+    private static PrintWriter output;
+    private static Router myrouter = new Router(output);
+
     public static void main(String[] args) throws Exception{
-        //Create print writer for the tasks
-        PrintWriter output;
-        output = new PrintWriter(new File("output1.txt"));
+
         //create the thread pool
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
-        //create interface
-        InterfaceSoftware IS = new InterfaceSoftware(output);
-
-        //create the add thread and give it priority
-        Storage store = new Storage(IS);
-        Delete erase = new Delete (IS);
-
         //execute
-        executor.execute(store);
-        executor.execute(erase);
+        executor.execute(new StorageTask());
+        executor.execute(new DeleteTask());
 
-        System.out.println("Thread store and erase created and launched");
-        System.out.flush();
-        output.println("Thread store and erase created and launched");
-        output.flush();
+        //shutdown
+        executor.shutdown();
+
+
     }
 
-    public static class InterfaceSoftware{
-        private int [] storage;
-        private int fill;
+    public static class StorageTask implements Runnable{
+
+        public void run(){
+            myrouter.store("PB1",5,-3);
+//            myrouter.store("FB2",6,78);
+//            myrouter.store("PB1",8,13);
+//            myrouter.store("MB3",10,22);
+//            myrouter.store("FB4",6,75);
+
+        }
+    }
+
+    public static class DeleteTask implements Runnable{
+
+        public void run(){
+
+        }
+    }
+
+    private static class Router {
+        //create the lock
+        private static Lock lock = new ReentrantLock();
+
+        //create condition
+        private static Condition newData = lock.newCondition();
+
+        int Dstore[];
+        String Cstore[];
         PrintWriter out;
-        static Lock lock = new ReentrantLock(); //create lock
-        static Condition condition = lock.newCondition(); // conditional lock
+        int isThereRoom;
 
-        public InterfaceSoftware(PrintWriter out){
+        //the constructor
+        public Router(PrintWriter out) {
             this.out = out;
-            storage = new int[30];
 
-            //initalize
+            //set to store 30
+            Dstore = new int [30];
+            Cstore = new String [30];
+
+            //set the array to 0
             for (int i = 0; i <= 29; i++){
-                storage[i] = 0;
+                Dstore[i] = 0;
+                Cstore[i] = "";
             }
+
+            //list the array
+//            for (int i = 0; i <=29; i++){
+//                System.out.println("DS["+i+"] = "+Dstore[i]);
+//                System.out.println("CS["+i+"] = "+Cstore[i]);
+//                System.out.flush();
+//            }
         }
 
-        public int getfill(){
-            return fill;
+        public int getIsThereRoom() {
+            return isThereRoom;
         }
 
-        public void printdata(){
-            //list the storage array
-            for (int i=0;i<=9;i++)
-                System.out.println("x["+i+"]="+storage[i]);
-            System.out.flush();
-        }
-
-        public void storing (String branch, int amt, int value){
-            //first acquire the lock
+        public void store (String branch, int amt, int value){
+            //acquire the lock
             lock.lock();
 
-            //now try to store the data
-            try{
-                System.out.println("in storedata amt " + amt + "value " + value + " fill " + fill);
-                while((fill+amt-1)>9)condition.await();//wait till there is room for the data
-                System.out.println("now there is room amt " + amt + " value" + value + " fill " + fill);
-                out.println("in storedata amt " + amt + "value " + value + " fill " + fill);
-                System.out.flush();
-                out.flush();
-
-                //now the store the data
-                for(int i=fill; i <=fill+amt-1;i++)storage[i] = value;
-                fill = fill+amt; //fill always points to the next available spot
-                System.out.println("Now the array looks like");
-                for (int i=0; i<=fill-1;i++)System.out.println("x["+i+"]="+storage[i]);
-                System.out.println("new fill is" +fill);
-                System.out.flush();
-
-                //now that the buffer has a value tell conditional to all
-            }catch (InterruptedException ex){
-                System.out.println("trouble in catch in storedata");
-                ex.printStackTrace();
-            }finally { //release the lock signal all and release
-                condition.signalAll();
-                lock.unlock();
+            for(int i=isThereRoom; i <=isThereRoom+amt-1;i++){
+                Dstore[i] = value;
+                Cstore[i] = branch;
             }
-        }//end of storing
 
-        public void erase(String branch, int amt){
-            //first acquire the lock
-            lock.lock();
-            try {
-                System.out.println("in cleardata amt " + amt + "fill " + fill);
+            isThereRoom = isThereRoom+amt; //fill always points to the next available spot
+
+            for (int i = 0; i <=29; i++){
+                System.out.println("CS["+i+"] = "+ Cstore[i] + "\t \tDS["+i+"] = "+Dstore[i]);
+
                 System.out.flush();
-                //trying to clear data. There must be at least one to clear
-                while (fill < 1)condition.await();//must be at least one value to clear
+            }
 
-                //now clear this amt of data or less
-                if (fill-amt-1<0){
-                    //the buffer is completely cleared.
-                    int ifmt = fill-1;
-                    System.out.println("M1 Clearing from " +ifmt+"to 0");
-                    System.out.flush();
-                    for (int i=fill-1;i>=0;i--){
-                        //clearing data from the fill-1 down
-                        System.out.println("c" + i);
-                        System.out.flush();
-                        System.out.println("clearing x[" + "]" + storage[i]);
-                        storage[i]=0;
-                        System.out.flush();
-                    }//end of for
-                    fill=0;
-                } else{
-                    //we can clear the amt and still have data
-                    int ifmt=fill-amt;
-                    int ifmt2=fill-1;
-                    System.out.println("M2 Clearing from "+ifmt2 + " to" + ifmt);
-                    System.out.flush();
-                    for (int i = fill-1; i>=fill-amt;i--){
-                        //clearing data from the fill-1 down
-                        System.out.println(i);
-                        System.out.flush();
-                        System.out.println("clearing x["+"]" + storage[i]);
-                        storage[i]=0;
-                        System.out.flush();
-                    }//end of for
-                    fill=fill-amt;
-                    System.out.println("Now the Fill is"+fill);
-                    System.out.flush();
+            lock.unlock();
+
+
+        }
+
+        public void delete (int amt, int value){
+            //acquire the lock
+            lock.lock();
+
+            while(isThereRoom < 1){
+                try {
+                    newData.await();
+                } catch (InterruptedException e) {
+                    System.out.println("Something wrong with Delete");
+                    e.printStackTrace();
                 }
-                System.out.println("leaving cleardata fill is "+fill);
-                System.out.flush();
-            }//end of try
-            catch(InterruptedException ex){
-                System.out.println("Trouble in catch in cleardata");
-                ex.printStackTrace();
-            }//end of catch
-            finally{
-                //now that the buffer is cleared tell conditional to all
-                condition.signalAll();
-                //release the lock
-                lock.unlock();
-            }//end of finally
-        }//end of cleardata
-    }//end of InterFace
+            }
 
 
-    public static class Storage implements Runnable{
-        //this is the buffer to add integers
-        InterfaceSoftware software;
-
-        //constructor
-        public Storage(InterfaceSoftware x){
-
-            software = x;
         }
+    }
 
-        public void run(){
-            //add integers to the buffer
-            int[] addn={5, 8, 3, 6};//this is the number to add
-            int[] nadd={-3,2,-5,-12};//these are the integers to add
-            for(int i=0;i<=3;i++){
-                software.storing("PB1", addn[i],nadd[i]);
-                System.out.println("just added" + addn[i]+" to the buffer int "+nadd[i]);
-                System.out.println("buffer fill is "+software.getfill());
-                System.out.flush();
-                Thread.yield();
-            }//end of for
-        }//end of run
-    }//end of storage
-
-    public static class Delete implements Runnable{
-        //this is the buffer to delete integers
-        InterfaceSoftware software;
-
-        //constructor
-        public Delete(InterfaceSoftware x){
-            software = x;
-        }
-
-        public void run(){
-            //add integers to the buffer
-            int[] subn={4,2,2,2,4}; //this is the number to subtract from the buffer
-            for(int i=0;i<=4;i++){
-                software.erase("FB2", subn[i]);
-                System.out.println("just cleared" +subn[i]+" from the buffer int");
-                System.out.println("buffer fill is " + software.getfill());
-                System.out.flush();
-                Thread.yield();
-            }//end of for
-        }//end of run
-    }//end of delete
 }
 
-class Branch {
-
-    //important variables
-    String branchName;
-
-    //constructor
-    public Branch (String branchName) {
-        this.branchName = branchName;
-    }
-
-}//end of branch
 
