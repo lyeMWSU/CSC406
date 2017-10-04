@@ -1,5 +1,0 @@
-Thread store and erase created and launched
-in storedata amt 5 value -3 fill 0
-in storedata amt 8 value 2 fill 1
-in storedata amt 3 value -5 fill 9
-in storedata amt 6 value -12 fill 12

@@ -34,7 +34,7 @@ public class Main {
 
         public void run(){
             myrouter.store("PB1",5,-3);
-//            myrouter.store("FB2",6,78);
+            myrouter.store("FB2",6,78);
 //            myrouter.store("PB1",8,13);
 //            myrouter.store("MB3",10,22);
 //            myrouter.store("FB4",6,75);
@@ -74,13 +74,6 @@ public class Main {
                 Dstore[i] = 0;
                 Cstore[i] = "";
             }
-
-            //list the array
-//            for (int i = 0; i <=29; i++){
-//                System.out.println("DS["+i+"] = "+Dstore[i]);
-//                System.out.println("CS["+i+"] = "+Cstore[i]);
-//                System.out.flush();
-//            }
         }
 
         public int getIsThereRoom() {
@@ -91,6 +84,7 @@ public class Main {
             //acquire the lock
             lock.lock();
 
+            //store the data
             for(int i=isThereRoom; i <=isThereRoom+amt-1;i++){
                 Dstore[i] = value;
                 Cstore[i] = branch;
@@ -98,9 +92,9 @@ public class Main {
 
             isThereRoom = isThereRoom+amt; //fill always points to the next available spot
 
+            System.out.println("----------Storing----------");
             for (int i = 0; i <=29; i++){
                 System.out.println("CS["+i+"] = "+ Cstore[i] + "\t \tDS["+i+"] = "+Dstore[i]);
-
                 System.out.flush();
             }
 
@@ -127,5 +121,4 @@ public class Main {
     }
 
 }
-
 
