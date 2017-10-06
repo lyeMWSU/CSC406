@@ -1,31 +1,52 @@
+/*
+Lisa Ye
+Kent Pickett
+CSC406
+October 1, 2017
+*/
+
 import java.io.*;
 import java.lang.*;
-//import java.lang.Thread; //this allows the threads to be run
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
 public class Main {
 
-    private static PrintWriter output;
-    private static Router myrouter = new Router(output);
-
     public static void main(String[] args) throws Exception{
+
+        PrintWriter output;
+        output = new PrintWriter(new File("output.txt"));
+
+        Router myrouter = new Router(output);
 
         //create the thread pool
         ExecutorService executor = Executors.newFixedThreadPool(2);
 
+        StorageTask storageTask = new StorageTask(myrouter);
+        DeleteTask deleteTask = new DeleteTask(myrouter);
+
         //execute
-        executor.execute(new StorageTask());
-        executor.execute(new DeleteTask());
+        executor.execute(storageTask);
+        executor.execute(deleteTask);
+
+
 
         //shutdown
         executor.shutdown();
+
+        while (!executor.isTerminated()){}
 
 
     }
 
     public static class StorageTask implements Runnable{
+        Router myrouter;
+
+        public StorageTask(Router myrouter){
+            this.myrouter = myrouter;
+        }
 
         public void run(){
             myrouter.store("PB1",5,-3);
@@ -38,6 +59,11 @@ public class Main {
     }
 
     public static class DeleteTask implements Runnable{
+        Router myrouter;
+
+        public DeleteTask(Router myrouter){
+            this.myrouter = myrouter;
+        }
 
         public void run(){
             myrouter.delete("FB2", 2);
@@ -54,10 +80,12 @@ public class Main {
         //create condition
         private static Condition newData = lock.newCondition();
 
+
         int Dstore[];
         String Cstore[];
         PrintWriter out;
         int whereIsItAt;
+        String branch;
 
         //the constructor
         public Router(PrintWriter out) {
@@ -75,19 +103,12 @@ public class Main {
             }
         }
 
-        public int getWhereIsItAt() {
-            return whereIsItAt;
-        }
-
         public void store (String branch, int amt, int value){
             //acquire the lock
             lock.lock();
 
             //try to store
             try{
-                //wait till there is room for storage
-                while((whereIsItAt+amt-1)>29)newData.await();
-
                 //store the data
                 for(int i = whereIsItAt; i <= whereIsItAt +amt-1; i++){
                     Dstore[i] = value;
@@ -99,17 +120,37 @@ public class Main {
 
                 //Print it
                 System.out.println();
+                System.out.println("---------------------------");
                 System.out.println("Will store  amt: " + amt + ", value: " + value);
                 System.out.println("----------Storing----------");
+                out.flush();
+
+                out.println();
+                out.println("---------------------------");
+                out.println("Will store  amt: " + amt + ", value: " + value);
+                out.println("----------Storing----------");
+                out.flush();
+
+
                 for (int i = 0; i <=29; i++){
                     System.out.println("CS["+i+"] = "+ Cstore[i] + "\t \tDS["+i+"] = "+Dstore[i]);
+                    out.println("CS["+i+"] = "+ Cstore[i] + "\t \tDS["+i+"] = "+Dstore[i]);
                     System.out.flush();
+                    out.flush();
                 }
                 System.out.println("---------------------------");
                 System.out.println("Where is it at? " + whereIsItAt);
                 System.out.println("---------------------------");
-
                 System.out.flush();
+
+                out.println("---------------------------");
+                out.println("Where is it at? " + whereIsItAt);
+                out.println("---------------------------");
+                out.flush();
+
+                //wait till there is room for storage
+                while((whereIsItAt+amt-1)>29)newData.await();
+
             }catch (InterruptedException ex ){
                 System.out.println("Error in Store");
                 ex.printStackTrace();
@@ -117,59 +158,103 @@ public class Main {
                 newData.signalAll();
                 lock.unlock();
             }
-
-
         }
 
-        public void delete (String branch, int amt){
 
+
+        public void delete (String branch, int amt) {
 
             //acquire the lock
             lock.lock();
 
             //try to delete
-            try{
-                //must have at least one element of data delete
-                while (Dstore.length < 1) newData.await();
-
-
-                //now Delete!
+            try {
                 System.out.println();
                 System.out.println("Time to Delete!");
-                for (int i = whereIsItAt - 1; i >= 0; i--) {
-                    //clearing data from the current array index down
-                    System.out.flush();
-                    System.out.println("clearing: CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
-                    //Dstore[i] = amt;
-                    Cstore[i] = branch;
-                    System.out.flush();
-                }
-
-                whereIsItAt = whereIsItAt - amt;
-
-                //print it
-                System.out.println();
-                System.out.println("----------Deleted----------");
-                for (int i = 0; i <=29; i++){
-                    System.out.println("CS["+i+"] = "+ Cstore[i] + "\t \tDS["+i+"] = "+Dstore[i]);
-                    System.out.flush();
-                }
-                System.out.println("---------------------------");
-                System.out.println("Where is it at? " + whereIsItAt);
-                System.out.println("---------------------------");
-
+                System.out.println("Branch: "+ branch + " amt: " + amt + " fill: " + whereIsItAt);
                 System.out.flush();
 
-            }catch(InterruptedException ex){
-                System.out.println("Error in Delete");
+                out.println();
+                out.println("Time to Delete!");
+                out.println("Branch: "+ branch + " amt: " + amt + " fill: " + whereIsItAt);
+                out.flush();
+
+                //trying to clear data. There must be at least one to clear
+                while (whereIsItAt < 1)newData.await();
+
+                //Now Delete!
+                if (whereIsItAt - amt - 1 < 0 ){
+                    int ifamt = whereIsItAt-1;
+                    System.out.println("Clearing from " +ifamt+" to 0");
+                    out.println("Clearing from " +ifamt+" to 0");
+                    System.out.flush();
+                    out.flush();
+
+                    for (int i=whereIsItAt-1;i>=0;i--){
+                        //clearing data from the fill-1 down
+                        System.out.println("clearing: CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
+                        out.println("clearing: CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
+                        Dstore[i]=0;
+                        Cstore[i]="";
+                        System.out.flush();
+                        out.flush();
+                    }
+
+                    whereIsItAt=0;
+
+                } else{
+                    //we can delete the amt and still have data
+                    int ifamt=whereIsItAt-amt;
+                    int ifamt2=whereIsItAt-1;
+                    System.out.println("Clearing from "+ifamt2 + " to " + ifamt);
+                    out.println("Clearing from "+ifamt2 + " to " + ifamt);
+                    System.out.flush();
+                    out.flush();
+                    for (int i = whereIsItAt-1; i>=whereIsItAt-amt;i--){
+                        System.out.println("clearing: CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
+                        out.println("clearing: CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
+                        Dstore[i]=0;
+                        Cstore[i]="";
+                        System.out.flush();
+                        out.flush();
+                    }
+                    whereIsItAt=whereIsItAt-amt;
+
+                    //print it
+                    System.out.println();
+                    System.out.println("----------Deleted----------");
+                    System.out.flush();
+
+                    out.println();
+                    out.println("----------Deleted----------");
+                    out.flush();
+
+                    for (int i = 0; i <=29; i++) {
+                        System.out.println("CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
+                        out.println("CS[" + i + "] = " + Cstore[i] + "\t \tDS[" + i + "] = " + Dstore[i]);
+                        System.out.flush();
+                        out.flush();
+                    }
+
+                    System.out.println("---------------------------");
+                    System.out.println("Where is it at? " + whereIsItAt);
+                    System.out.println("---------------------------");
+                    System.out.flush();
+
+                    out.println("---------------------------");
+                    out.println("Where is it at? " + whereIsItAt);
+                    out.println("---------------------------");
+                    out.flush();
+                }
+            }//end of try
+            catch(InterruptedException ex){
+                System.out.println("Trouble in catch in cleardata");
                 ex.printStackTrace();
-            }finally {
+            }
+            finally{
                 newData.signalAll();
                 lock.unlock();
             }
-
-
         }
     }
-
 }
