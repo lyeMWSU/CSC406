@@ -1,9 +1,4 @@
 import java.io.*;
-import java.io.IOException;
-import javax.swing.*;
-import java.nio.Buffer;
-import java.util.*;
-import java.io.File;
 import java.lang.*;
 //import java.lang.Thread; //this allows the threads to be run
 import java.util.concurrent.*;
@@ -45,7 +40,10 @@ public class Main {
     public static class DeleteTask implements Runnable{
 
         public void run(){
-
+            myrouter.delete("FB2", 2);
+            myrouter.delete("PB1", 2);
+            myrouter.delete("MB3", 4);
+            myrouter.delete("PB1", 3);
         }
     }
 
@@ -59,7 +57,7 @@ public class Main {
         int Dstore[];
         String Cstore[];
         PrintWriter out;
-        int isThereRoom;
+        int whereIsItAt;
 
         //the constructor
         public Router(PrintWriter out) {
@@ -70,14 +68,15 @@ public class Main {
             Cstore = new String [30];
 
             //set the array to 0
+            whereIsItAt = 0;
             for (int i = 0; i <= 29; i++){
                 Dstore[i] = 0;
                 Cstore[i] = "";
             }
         }
 
-        public int getIsThereRoom() {
-            return isThereRoom;
+        public int getWhereIsItAt() {
+            return whereIsItAt;
         }
 
         public void store (String branch, int amt, int value){
@@ -85,13 +84,14 @@ public class Main {
             lock.lock();
 
             //store the data
-            for(int i=isThereRoom; i <=isThereRoom+amt-1;i++){
+            for(int i = whereIsItAt; i <= whereIsItAt +amt-1; i++){
                 Dstore[i] = value;
                 Cstore[i] = branch;
             }
 
-            isThereRoom = isThereRoom+amt; //fill always points to the next available spot
+            whereIsItAt = whereIsItAt +amt; //fill always points to the next available spot
 
+            System.out.println();
             System.out.println("----------Storing----------");
             for (int i = 0; i <=29; i++){
                 System.out.println("CS["+i+"] = "+ Cstore[i] + "\t \tDS["+i+"] = "+Dstore[i]);
@@ -101,13 +101,14 @@ public class Main {
             lock.unlock();
 
 
+
         }
 
-        public void delete (int amt, int value){
+        public void delete (String branch, int amt){
             //acquire the lock
             lock.lock();
 
-            while(isThereRoom < 1){
+            while(whereIsItAt < 1){
                 try {
                     newData.await();
                 } catch (InterruptedException e) {
@@ -121,4 +122,3 @@ public class Main {
     }
 
 }
-

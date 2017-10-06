@@ -51,8 +51,10 @@ public class Main {
         //now let all threads shut down and wait till all tasks are finished
 
         while(!executor.isTerminated());
+        System.out.println("----------------------");
         System.out.println("What is in the Buffer?");
         Buf1.printdata();
+        System.out.println("----------------------");
         System.out.flush();
 
     }//end of main
@@ -64,6 +66,7 @@ public class Main {
         private int bsize;
         private static Lock lockstrclr = new ReentrantLock(); // Create a lock for objects in this clas
         private static Condition infostorage = lockstrclr.newCondition(); // create a condition for the lock
+
         public Buffer (PrintWriter x){
             //this is the constructor
             out1 = x;
@@ -73,32 +76,38 @@ public class Main {
             //now initialize all integers to 0
             for (int i=0; i <= 9; i++)storage[i]=0;
         }
+
         public int getfill(){
             return fill;
         }
+
         public void printdata(){
             //list the storage array
             for (int i=0;i<=9;i++)
                 System.out.println("x["+i+"]="+storage[i]);
                 System.out.flush();
         }
+
         public void storedata (int amt, int value){
             //first acquire the lock
             lockstrclr.lock();
             //now try to store the data
             try{
-                System.out.println("in storedata amt " + amt + "value " + value + " fill " + fill);
+                System.out.println("in storedata amt:" + amt + " value: " + value + " fill: " + fill);
+
                 while((fill+amt-1)>9)infostorage.await();//wait till there is room for the data
-                System.out.println("now there is room amt " + amt + " value" + value + " fill" + fill);
+
+                System.out.println("now there is room amt: " + amt + " value: " + value + " fill: " + fill);
                 out1.println("in storedata amt " + amt + "value " + value + " fill " + fill);
                 System.out.flush();
                 out1.flush();
+
                 //now the store the data
                 for(int i=fill; i <=fill+amt-1;i++)storage[i] = value;
                 fill = fill+amt; //fill always points to the next available spot
-                System.out.println("Now the array looks like");
-                for (int i=0; i<=fill-1;i++)System.out.println("x["+i+"]="+storage[i]);
-                System.out.println("new fill is" +fill);
+                System.out.println("Now the array looks like this: ");
+                for (int i=0; i<=fill-1;i++)System.out.println("x["+i+"]= "+storage[i]);
+                System.out.println("new fill is: " + fill);
                 System.out.flush();
                 //now that the buffer has a value tell conditional to all
             }catch (InterruptedException ex){
@@ -114,8 +123,9 @@ public class Main {
             //first acquire the lock
             lockstrclr.lock();
             try {
-                System.out.println("in cleardata amt " + amt + "fill " + fill);
+                System.out.println("in cleardata amt: " + amt + " fill: " + fill);
                 System.out.flush();
+
                 //trying to clear data. There must be at least one to clear
                 while (fill < 1)infostorage.await();//must be at least one value to clear
                 //now clear this amt of data or less
@@ -128,7 +138,7 @@ public class Main {
                         //clearing data from the fill-1 down
                         System.out.println("c" + i);
                         System.out.flush();
-                        System.out.println("clearing x[" + "]" + storage[i]);
+                        System.out.println("clearing x[" + storage[i]+ "]");
                         storage[i]=0;
                         System.out.flush();
                     }//end of for
@@ -137,21 +147,21 @@ public class Main {
                     //we can clear the amt and still have data
                     int ifmt=fill-amt;
                     int ifmt2=fill-1;
-                    System.out.println("M2 Clearing from "+ifmt2 + " to" + ifmt);
+                    System.out.println("M2 Clearing from "+ifmt2 + " to " + ifmt);
                     System.out.flush();
                     for (int i = fill-1; i>=fill-amt;i--){
                         //clearing data from the fill-1 down
-                        System.out.println(i);
+                        //System.out.println(i);
                         System.out.flush();
-                        System.out.println("clearing x["+"]" + storage[i]);
+                        System.out.println("clearing x[" + i + "]"+ storage[i]);
                         storage[i]=0;
                         System.out.flush();
                     }//end of for
                     fill=fill-amt;
-                    System.out.println("Now the Fill is"+fill);
+                    System.out.println("Now the Fill is: "+fill);
                     System.out.flush();
                 }
-                System.out.println("leaving cleardata fill is "+fill);
+                System.out.println("leaving cleardata fill is: "+fill);
                 System.out.flush();
             }//end of try
             catch(InterruptedException ex){
@@ -181,8 +191,8 @@ public class Main {
             int[] nadd={-3,2,-5,-12};//these are the integers to add
             for(int i=0;i<=3;i++){
                 Bufx.storedata(addn[i],nadd[i]);
-                System.out.println("just added" + addn[i]+" to the buffer int "+nadd[i]);
-                System.out.println("buffer fill is "+Bufx.getfill());
+                System.out.println("just added: " + addn[i] + " to the buffer int "+nadd[i]);
+                System.out.println("buffer fill is " +Bufx.getfill());
                 System.out.flush();
                 Thread.yield();
             }//end of for
@@ -201,7 +211,7 @@ public class Main {
             int[] subn={4,2,2,2,4}; //this is the number to subtract from the buffer
             for(int i=0;i<=4;i++){
                 Bufx.cleardata(subn[i]);
-                System.out.println("just cleared" +subn[i]+" from the buffer int");
+                System.out.println("just cleared " +subn[i]+" from the buffer int");
                 System.out.println("buffer fill is " + Bufx.getfill());
                 System.out.flush();
                 Thread.yield();
