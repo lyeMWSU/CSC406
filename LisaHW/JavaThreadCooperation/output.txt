@@ -73,9 +73,12 @@ CS[29] = 	 	DS[29] = 0
 Where is it at? 11
 ---------------------------
 
----------------------------
-Will store  amt: 8, value: 13
-----------Storing----------
+Time to Delete!
+Clearing from 10 to 9
+clearing: CS[10] = FB2	 	DS[10] = 78
+clearing: CS[9] = FB2	 	DS[9] = 78
+
+----------Deleted----------
 CS[0] = PB1	 	DS[0] = -3
 CS[1] = PB1	 	DS[1] = -3
 CS[2] = PB1	 	DS[2] = -3
@@ -85,16 +88,16 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
-CS[11] = PB1	 	DS[11] = 13
-CS[12] = PB1	 	DS[12] = 13
-CS[13] = PB1	 	DS[13] = 13
-CS[14] = PB1	 	DS[14] = 13
-CS[15] = PB1	 	DS[15] = 13
-CS[16] = PB1	 	DS[16] = 13
-CS[17] = PB1	 	DS[17] = 13
-CS[18] = PB1	 	DS[18] = 13
+CS[9] = 	 	DS[9] = 0
+CS[10] = 	 	DS[10] = 0
+CS[11] = 	 	DS[11] = 0
+CS[12] = 	 	DS[12] = 0
+CS[13] = 	 	DS[13] = 0
+CS[14] = 	 	DS[14] = 0
+CS[15] = 	 	DS[15] = 0
+CS[16] = 	 	DS[16] = 0
+CS[17] = 	 	DS[17] = 0
+CS[18] = 	 	DS[18] = 0
 CS[19] = 	 	DS[19] = 0
 CS[20] = 	 	DS[20] = 0
 CS[21] = 	 	DS[21] = 0
@@ -107,16 +110,12 @@ CS[27] = 	 	DS[27] = 0
 CS[28] = 	 	DS[28] = 0
 CS[29] = 	 	DS[29] = 0
 ---------------------------
-Where is it at? 19
+Where is it at? 9
 ---------------------------
 
-Time to Delete!
-Branch: FB2 amt: 2 fill: 19
-Clearing from 18 to 17
-clearing: CS[18] = PB1	 	DS[18] = 13
-clearing: CS[17] = PB1	 	DS[17] = 13
-
-----------Deleted----------
+---------------------------
+Will store  amt: 8, value: 13
+----------Storing----------
 CS[0] = PB1	 	DS[0] = -3
 CS[1] = PB1	 	DS[1] = -3
 CS[2] = PB1	 	DS[2] = -3
@@ -126,8 +125,8 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
+CS[9] = PB1	 	DS[9] = 13
+CS[10] = PB1	 	DS[10] = 13
 CS[11] = PB1	 	DS[11] = 13
 CS[12] = PB1	 	DS[12] = 13
 CS[13] = PB1	 	DS[13] = 13
@@ -163,8 +162,8 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
+CS[9] = PB1	 	DS[9] = 13
+CS[10] = PB1	 	DS[10] = 13
 CS[11] = PB1	 	DS[11] = 13
 CS[12] = PB1	 	DS[12] = 13
 CS[13] = PB1	 	DS[13] = 13
@@ -189,7 +188,6 @@ Where is it at? 27
 ---------------------------
 
 Time to Delete!
-Branch: PB1 amt: 2 fill: 27
 Clearing from 26 to 25
 clearing: CS[26] = MB3	 	DS[26] = 22
 clearing: CS[25] = MB3	 	DS[25] = 22
@@ -204,8 +202,8 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
+CS[9] = PB1	 	DS[9] = 13
+CS[10] = PB1	 	DS[10] = 13
 CS[11] = PB1	 	DS[11] = 13
 CS[12] = PB1	 	DS[12] = 13
 CS[13] = PB1	 	DS[13] = 13
@@ -230,7 +228,6 @@ Where is it at? 25
 ---------------------------
 
 Time to Delete!
-Branch: MB3 amt: 4 fill: 25
 Clearing from 24 to 21
 clearing: CS[24] = MB3	 	DS[24] = 22
 clearing: CS[23] = MB3	 	DS[23] = 22
@@ -247,8 +244,8 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
+CS[9] = PB1	 	DS[9] = 13
+CS[10] = PB1	 	DS[10] = 13
 CS[11] = PB1	 	DS[11] = 13
 CS[12] = PB1	 	DS[12] = 13
 CS[13] = PB1	 	DS[13] = 13
@@ -273,7 +270,6 @@ Where is it at? 21
 ---------------------------
 
 Time to Delete!
-Branch: PB1 amt: 3 fill: 21
 Clearing from 20 to 18
 clearing: CS[20] = MB3	 	DS[20] = 22
 clearing: CS[19] = MB3	 	DS[19] = 22
@@ -289,8 +285,8 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
+CS[9] = PB1	 	DS[9] = 13
+CS[10] = PB1	 	DS[10] = 13
 CS[11] = PB1	 	DS[11] = 13
 CS[12] = PB1	 	DS[12] = 13
 CS[13] = PB1	 	DS[13] = 13
@@ -326,8 +322,8 @@ CS[5] = FB2	 	DS[5] = 78
 CS[6] = FB2	 	DS[6] = 78
 CS[7] = FB2	 	DS[7] = 78
 CS[8] = FB2	 	DS[8] = 78
-CS[9] = FB2	 	DS[9] = 78
-CS[10] = FB2	 	DS[10] = 78
+CS[9] = PB1	 	DS[9] = 13
+CS[10] = PB1	 	DS[10] = 13
 CS[11] = PB1	 	DS[11] = 13
 CS[12] = PB1	 	DS[12] = 13
 CS[13] = PB1	 	DS[13] = 13
