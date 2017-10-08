@@ -1,0 +1,18 @@
+5283		4827		4000		18481
+Sorry, 5283, the minimum bid is too low for 4827, Dutch Masters Oil Painting, for 4000
+
+4681		4827		15000		18482
+Congratulations 4681! You are currently the highest bidder for 4827, Dutch Masters Oil Painting, but keep watching for the good stuff. Things goes fast on eBay.
+
+5283		4827		17500		18485
+Congratulations 5283! You are currently the highest bidder for 4827, Dutch Masters Oil Painting, but keep watching for the good stuff. Things goes fast on eBay.
+
+5283		4827		14500		18483
+Sorry, 5283, this is not enough for 4827, Dutch Masters Oil Painting, for 14500
+
+4681		4827		25000		18489
+Congratulations 4681! You are currently the highest bidder for 4827, Dutch Masters Oil Painting, but keep watching for the good stuff. Things goes fast on eBay.
+
+5283		4827		32000		18495
+Sorry, 5283, you ran out of time! Time Currently: 18495 End Time: 18490
+
